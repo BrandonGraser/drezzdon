@@ -35,6 +35,8 @@ const HOTSPOTS = [
   },
 ];
 
+const DEBUG = true; // set to false when hotspots are aligned
+
 export default function HomePage() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
@@ -58,10 +60,17 @@ export default function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={spot.label}
-            className="absolute group flex items-center justify-center border-2 border-transparent rounded-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06]"
-            style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }}
+            className="absolute flex items-center justify-center rounded-sm"
+            style={{
+              top: spot.top,
+              left: spot.left,
+              width: spot.width,
+              height: spot.height,
+              border: DEBUG ? "2px solid blue" : "2px solid transparent",
+              background: DEBUG ? "rgba(0,0,255,0.2)" : "transparent",
+            }}
           >
-            <span className="text-white text-xs tracking-[0.2em] uppercase opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0">
+            <span className="text-white text-xs tracking-[0.2em] uppercase font-bold">
               {spot.label}
             </span>
           </a>
@@ -70,10 +79,17 @@ export default function HomePage() {
             key={spot.id}
             href={spot.href}
             aria-label={spot.label}
-            className="absolute group flex items-center justify-center border-2 border-transparent rounded-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06]"
-            style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }}
+            className="absolute flex items-center justify-center rounded-sm"
+            style={{
+              top: spot.top,
+              left: spot.left,
+              width: spot.width,
+              height: spot.height,
+              border: DEBUG ? "2px solid blue" : "2px solid transparent",
+              background: DEBUG ? "rgba(0,0,255,0.2)" : "transparent",
+            }}
           >
-            <span className="text-white text-xs tracking-[0.2em] uppercase opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0">
+            <span className="text-white text-xs tracking-[0.2em] uppercase font-bold">
               {spot.label}
             </span>
           </Link>
