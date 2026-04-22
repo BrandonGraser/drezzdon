@@ -55,8 +55,10 @@ export default function HomePage() {
     : "https://www.dropbox.com/scl/fo/6tk8vtqi2yumnwal10a3g/ACc2whiGSh663Pw6UWuiDTc/HOMEPAGE%20-%2016-9.mp4?rlkey=lj9i39hr7vn4bjb7j4vlkmpzx&st=y3pb1twe&dl=1";
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
-
+    <div
+      className="relative w-full h-screen overflow-hidden bg-black"
+      style={{ cursor: "url('/cursor-arrow.png') 0 0, auto" }}
+    >
       <video
         key={videoSrc}
         className="absolute inset-0 w-full h-full object-cover object-center"
@@ -78,6 +80,7 @@ export default function HomePage() {
           top: `${top}px`,
           width: `${width}px`,
           height: `${height}px`,
+          cursor: "url('/cursor-arrow.png') 0 0, pointer",
         };
 
         return spot.external ? (
@@ -87,25 +90,17 @@ export default function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={spot.label}
-            className="absolute group flex items-center justify-center rounded-sm transition-all duration-300 hover:bg-white/10 hover:border hover:border-white/30"
+            className="absolute"
             style={style}
-          >
-            <span className="text-white text-xs tracking-[0.2em] uppercase opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0">
-              {spot.label}
-            </span>
-          </a>
+          />
         ) : (
           <Link
             key={spot.id}
             href={spot.href}
             aria-label={spot.label}
-            className="absolute group flex items-center justify-center rounded-sm transition-all duration-300 hover:bg-white/10 hover:border hover:border-white/30"
+            className="absolute"
             style={style}
-          >
-            <span className="text-white text-xs tracking-[0.2em] uppercase opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0">
-              {spot.label}
-            </span>
-          </Link>
+          />
         );
       })}
     </div>
