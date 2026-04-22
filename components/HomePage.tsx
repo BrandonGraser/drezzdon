@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Hotspot positions as % of the NATIVE VIDEO FRAME (1320x880)
 const HOTSPOTS = [
@@ -10,8 +10,8 @@ const HOTSPOTS = [
     label: "Shop",
     href: "https://YOUR-STORE.myshopify.com",
     external: true,
-    top: 49.4,
-    left: 37.1,
+    top: 37.0,
+    left: 35.5,
     width: 9.1,
     height: 15.3,
   },
@@ -20,8 +20,8 @@ const HOTSPOTS = [
     label: "My Work",
     href: "/my-work",
     external: false,
-    top: 55.7,
-    left: 53.8,
+    top: 44.0,
+    left: 53.0,
     width: 6.8,
     height: 9.7,
   },
@@ -30,51 +30,49 @@ const HOTSPOTS = [
     label: "Contact",
     href: "/contact",
     external: false,
-    top: 73.3,
-    left: 43.6,
+    top: 61.0,
+    left: 43.0,
     width: 6.8,
     height: 8.5,
   },
 ];
 
-const VIDEO_ASPECT = 1320 / 880; // native video aspect ratio (16:9 = 1.5)
-const DEBUG = true; // flip to false once aligned
+const VIDEO_ASPECT = 1320 / 880;
+const DEBUG = true;
+
+function calcPositions() {
+  if (typeof window === "undefined") return null;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const viewportAspect = vw / vh;
+
+  let renderedW: number, renderedH: number;
+  if (viewportAspect > VIDEO_ASPECT) {
+    renderedW = vw;
+    renderedH = vw / VIDEO_ASPECT;
+  } else {
+    renderedH = vh;
+    renderedW = vh * VIDEO_ASPECT;
+  }
+
+  const cropX = (renderedW - vw) / 2;
+  const cropY = (renderedH - vh) / 2;
+
+  return { renderedW, renderedH, cropX, cropY };
+}
 
 export default function HomePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0, scale: 1 });
+  const [dims, setDims] = useState(calcPositions);
 
   useEffect(() => {
-    function recalc() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const viewportAspect = vw / vh;
-
-      let renderedW: number, renderedH: number;
-
-      if (viewportAspect > VIDEO_ASPECT) {
-        // viewport is wider — video fills width, crops top/bottom
-        renderedW = vw;
-        renderedH = vw / VIDEO_ASPECT;
-      } else {
-        // viewport is taller — video fills height, crops left/right
-        renderedH = vh;
-        renderedW = vh * VIDEO_ASPECT;
-      }
-
-      const offsetX = (vw - renderedW) / 2;
-      const offsetY = (vh - renderedH) / 2;
-
-      setOffset({ x: offsetX, y: offsetY, scale: renderedW / 100 });
-    }
-
-    recalc();
-    window.addEventListener("resize", recalc);
-    return () => window.removeEventListener("resize", recalc);
+    function update() { setDims(calcPositions()); }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-black">
+    <div className="relative w-full h-screen overflow-hidden bg-black">
 
       {/* FULLSCREEN VIDEO */}
       <video
@@ -86,28 +84,11 @@ export default function HomePage() {
         playsInline
       />
 
-      {/* HOTSPOTS — dynamically adjusted for object-cover crop */}
-      {HOTSPOTS.map((spot) => {
-        const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
-        const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
-        const viewportAspect = vw / vh;
-
-        let renderedW: number, renderedH: number;
-        if (viewportAspect > VIDEO_ASPECT) {
-          renderedW = vw;
-          renderedH = vw / VIDEO_ASPECT;
-        } else {
-          renderedH = vh;
-          renderedW = vh * VIDEO_ASPECT;
-        }
-
-        const cropX = (renderedW - vw) / 2;
-        const cropY = (renderedH - vh) / 2;
-
-        const left = (spot.left / 100) * renderedW - cropX;
-        const top = (spot.top / 100) * renderedH - cropY;
-        const width = (spot.width / 100) * renderedW;
-        const height = (spot.height / 100) * renderedH;
+      {dims && HOTSPOTS.map((spot) => {
+        const left = (spot.left / 100) * dims.renderedW - dims.cropX;
+        const top = (spot.top / 100) * dims.renderedH - dims.cropY;
+        const width = (spot.width / 100) * dims.renderedW;
+        const height = (spot.height / 100) * dims.renderedH;
 
         const style = {
           left: `${left}px`,
