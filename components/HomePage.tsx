@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 const DESKTOP_ASPECT = 1320 / 880;
 const MOBILE_ASPECT = 1080 / 1920;
 
+const CURSOR = "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAACZklEQVR4nLXXT2sTQRjH8e8kRfDQg4gKWvCiWLQoKlrRkzcFFcGLCIIiePEd+DpEEURFFFqlBQ+ivgXfgUdb0bbaxn9FbRJ/HvaZ7DiZte1udmDY3YTd5zPzPDPZOEBYawIO6IYf1twaw8A5HFsscMeCNwNQra0JegNaAk2ALoG2ZYZeb4CG7MjgO7oGUtAXQVOgy6Dt9WPQDtAyqA1aiTAt0HPQVdBIAcZVAfiRvLSAbVDXju0I8w30AnQdtHNQM+BHcCUA/Al6EeYH6BXoBk6j9oxSM+Fv2gr6ag/vRojVMBecE6Bm2RrwN05boJUCgO8dw/wCnbXgFYoyL6SLBWmIZ0GGPGPBh6rVQZ67TWRLsCgNXesLoJODCa4GdtYEWsBru+7S30S2My4Db6XeZ1VbbyQOdD6RBj/yjnWBZkC7gnsrzEJ24tMwDJoL0uAD+t4hXwXvQLurI/ILvxru4yTQTwu0ZDl/GhSgR8yA9lRD9ANOkVf7POgQWcFtAE0bLkTMgkbLI/ILv5tttFF/Bo0FwZ0hpxKI96C95RB9y0KAbjqn8eiBjQDxLIH4ANq3fsSq67Tv2tlxMlETH0Fj60MUBy7aXv13DjSRmIk50P61I8otHz8LgJ4kZmIedIA17ZblADHicQKxADq4+kyUB8SIRwnEJ9Dh/yOqAWLEw0RNLIKOFCOqA2LEgwRiCXQ0jRgMIEbcSyBaoGP9iMEBYsTdBOIL6Dj/vEUNFuAR/nflTgHihCFqAcSI2wHiN/k+sblOQIy4ZQiBvoNO15mCYkS2TY8HNeB8Hups4T/sEWCW7B20C/wF25xlsry2/qMAAAAASUVORK5CYII=') 0 0, auto";
+
 const DESKTOP_HOTSPOTS = [
   { id: "shop", label: "Shop", href: "https://YOUR-STORE.myshopify.com", external: true, top: 46.5, left: 37.1, width: 9.1, height: 15.3 },
   { id: "work", label: "My Work", href: "/my-work", external: false, top: 54.5, left: 53.4, width: 6.8, height: 9.7 },
@@ -57,7 +59,7 @@ export default function HomePage() {
   return (
     <div
       className="relative w-full h-screen overflow-hidden bg-black"
-      style={{ cursor: "url('/cursor-arrow.png') 0 0, auto" }}
+      style={{ cursor: CURSOR }}
     >
       <video
         key={videoSrc}
@@ -80,7 +82,7 @@ export default function HomePage() {
           top: `${top}px`,
           width: `${width}px`,
           height: `${height}px`,
-          cursor: "url('/cursor-arrow.png') 0 0, pointer",
+          cursor: CURSOR,
         };
 
         return spot.external ? (
