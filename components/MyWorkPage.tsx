@@ -2,14 +2,14 @@
 
 import { useEffect, useState, useRef } from "react";
 
-const VIDEO_ASPECT = 1920 / 1080; // 16:9 approx — update if you know exact resolution
+const VIDEO_ASPECT = 1920 / 1080;
 
 const INITIAL_HOTSPOTS = [
-  { id: "my-art",      label: "My Art",      href: "#", top: 8.0,  left: 12.0, width: 14.0, height: 28.0 },
-  { id: "live-exhibit",label: "Live Exhibit", href: "#", top: 8.0,  left: 43.0, width: 11.0, height: 35.0 },
-  { id: "music",       label: "Music",        href: "#", top: 8.0,  left: 64.0, width: 30.0, height: 27.0 },
-  { id: "short-films", label: "Short Films",  href: "#", top: 47.0, left: 11.0, width: 22.0, height: 30.0 },
-  { id: "backgrounds", label: "Backgrounds",  href: "#", top: 47.0, left: 67.0, width: 16.0, height: 30.0 },
+  { id: "my-art",       label: "My Art",       href: "#", top: 8.0,  left: 12.0, width: 14.0, height: 28.0 },
+  { id: "live-exhibit", label: "Live Exhibit",  href: "#", top: 8.0,  left: 43.0, width: 11.0, height: 35.0 },
+  { id: "music",        label: "Music",         href: "#", top: 8.0,  left: 64.0, width: 30.0, height: 27.0 },
+  { id: "short-films",  label: "Short Films",   href: "#", top: 47.0, left: 11.0, width: 22.0, height: 30.0 },
+  { id: "backgrounds",  label: "Backgrounds",   href: "#", top: 47.0, left: 67.0, width: 16.0, height: 30.0 },
 ];
 
 const DEBUG = true;
@@ -30,12 +30,15 @@ function calcDims() {
   return { renderedW, renderedH, cropX, cropY };
 }
 
+type Action =
+  | { type: "move"; id: string; mouseX: number; mouseY: number; origLeft: number; origTop: number }
+  | { type: "resize"; id: string; mouseX: number; mouseY: number; origW: number; origH: number };
+
 export default function MyWorkPage() {
   const [dims, setDims] = useState<ReturnType<typeof calcDims>>(null);
   const [hotspots, setHotspots] = useState(INITIAL_HOTSPOTS);
-  const [dragging, setDragging] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const dragStart = useRef<{ mouseX: number; mouseY: number; origLeft: number; origTop: number } | null>(null);
+  const action = useRef<Action | null>(null);
 
   useEffect(() => {
     function update() { setDims(calcDims()); }
@@ -45,38 +48,38 @@ export default function MyWorkPage() {
   }, []);
 
   useEffect(() => {
-    if (!dragging || !dims) return;
-    function onMove(e: MouseEvent | TouchEvent) {
-      if (!dragStart.current || !dims) return;
-      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-      const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
-      const dx = clientX - dragStart.current.mouseX;
-      const dy = clientY - dragStart.current.mouseY;
-      const newLeft = dragStart.current.origLeft + (dx / dims.renderedW) * 100;
-      const newTop = dragStart.current.origTop + (dy / dims.renderedH) * 100;
-      setHotspots(hs => hs.map(h => h.id === dragging ? { ...h, left: newLeft, top: newTop } : h));
+    if (!dims) return;
+    function onMove(e: MouseEvent) {
+      if (!action.current || !dims) return;
+      const dx = e.clientX - action.current.mouseX;
+      const dy = e.clientY - action.current.mouseY;
+      const a = action.current;
+      if (a.type === "move") {
+        const newLeft = a.origLeft + (dx / dims.renderedW) * 100;
+        const newTop  = a.origTop  + (dy / dims.renderedH) * 100;
+        setHotspots(hs => hs.map(h => h.id === a.id ? { ...h, left: newLeft, top: newTop } : h));
+      } else {
+        const newW = Math.max(2, a.origW + (dx / dims.renderedW) * 100);
+        const newH = Math.max(2, a.origH + (dy / dims.renderedH) * 100);
+        setHotspots(hs => hs.map(h => h.id === a.id ? { ...h, width: newW, height: newH } : h));
+      }
     }
-    function onUp() { setDragging(null); dragStart.current = null; }
+    function onUp() { action.current = null; }
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
-    window.addEventListener("touchmove", onMove, { passive: true });
-    window.addEventListener("touchend", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      window.removeEventListener("touchmove", onMove);
-      window.removeEventListener("touchend", onUp);
-    };
-  }, [dragging, dims]);
+    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+  }, [dims]);
 
-  function onPointerDown(e: React.MouseEvent | React.TouchEvent, id: string) {
-    e.preventDefault();
-    e.stopPropagation();
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+  function startMove(e: React.MouseEvent, id: string) {
+    e.preventDefault(); e.stopPropagation();
     const spot = hotspots.find(h => h.id === id)!;
-    dragStart.current = { mouseX: clientX, mouseY: clientY, origLeft: spot.left, origTop: spot.top };
-    setDragging(id);
+    action.current = { type: "move", id, mouseX: e.clientX, mouseY: e.clientY, origLeft: spot.left, origTop: spot.top };
+  }
+
+  function startResize(e: React.MouseEvent, id: string) {
+    e.preventDefault(); e.stopPropagation();
+    const spot = hotspots.find(h => h.id === id)!;
+    action.current = { type: "resize", id, mouseX: e.clientX, mouseY: e.clientY, origW: spot.width, origH: spot.height };
   }
 
   function copyCoords() {
@@ -89,43 +92,35 @@ export default function MyWorkPage() {
   }
 
   return (
-    <div className="fixed inset-0 w-full h-full overflow-hidden bg-black" style={{ cursor: "default" }}>
-
+    <div className="fixed inset-0 w-full h-full overflow-hidden bg-black">
       <video
         className="absolute inset-0 w-full h-full object-contain object-center"
         src="https://www.dropbox.com/scl/fo/6tk8vtqi2yumnwal10a3g/APDAuw3sTUKaN6Ka2D9cATA/MY%20WORK%2016-9.mp4?rlkey=lj9i39hr7vn4bjb7j4vlkmpzx&st=27dl30cp&dl=1"
-        autoPlay
-        muted
-        loop
-        playsInline
+        autoPlay muted loop playsInline
       />
 
       {dims && hotspots.map((spot) => {
-        const left = (spot.left / 100) * dims.renderedW - dims.cropX;
-        const top = (spot.top / 100) * dims.renderedH - dims.cropY;
-        const width = (spot.width / 100) * dims.renderedW;
+        const left   = (spot.left   / 100) * dims.renderedW - dims.cropX;
+        const top    = (spot.top    / 100) * dims.renderedH - dims.cropY;
+        const width  = (spot.width  / 100) * dims.renderedW;
         const height = (spot.height / 100) * dims.renderedH;
 
         return (
           <div
             key={spot.id}
-            className="absolute flex items-center justify-center rounded-sm"
-            style={{
-              left: `${left}px`,
-              top: `${top}px`,
-              width: `${width}px`,
-              height: `${height}px`,
-              border: "2px solid blue",
-              background: "rgba(0,0,255,0.2)",
-              cursor: dragging === spot.id ? "grabbing" : "grab",
-              touchAction: "none",
-            }}
-            onMouseDown={(e) => onPointerDown(e, spot.id)}
-            onTouchStart={(e) => onPointerDown(e, spot.id)}
+            className="absolute flex items-center justify-center"
+            style={{ left, top, width, height, border: "2px solid blue", background: "rgba(0,0,255,0.15)", cursor: "grab", userSelect: "none" }}
+            onMouseDown={(e) => startMove(e, spot.id)}
           >
-            <span className="text-white text-xs tracking-[0.2em] uppercase font-bold pointer-events-none select-none">
+            <span className="text-white text-xs tracking-widest uppercase font-bold pointer-events-none select-none">
               {spot.label}
             </span>
+            {/* Resize handle — bottom-right corner */}
+            <div
+              className="absolute bottom-0 right-0 w-4 h-4 bg-blue-400"
+              style={{ cursor: "nwse-resize" }}
+              onMouseDown={(e) => startResize(e, spot.id)}
+            />
           </div>
         );
       })}
