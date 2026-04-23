@@ -89,7 +89,7 @@ export default function MyWorkPage() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black" style={{ cursor: "default" }}>
+    <div className="fixed inset-0 w-full h-full overflow-hidden bg-black" style={{ cursor: "default" }}>
 
       <video
         className="absolute inset-0 w-full h-full object-cover object-center"
