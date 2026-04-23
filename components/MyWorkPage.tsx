@@ -1,18 +1,25 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const VIDEO_ASPECT = 1920 / 1080;
 
-const INITIAL_HOTSPOTS = [
-  { id: "my-art",       label: "My Art",       href: "#", top: 8.0,  left: 12.0, width: 14.0, height: 28.0 },
-  { id: "live-exhibit", label: "Live Exhibit",  href: "#", top: 8.0,  left: 43.0, width: 11.0, height: 35.0 },
-  { id: "music",        label: "Music",         href: "#", top: 8.0,  left: 64.0, width: 30.0, height: 27.0 },
-  { id: "short-films",  label: "Short Films",   href: "#", top: 47.0, left: 11.0, width: 22.0, height: 30.0 },
-  { id: "backgrounds",  label: "Backgrounds",   href: "#", top: 47.0, left: 67.0, width: 16.0, height: 30.0 },
+const HOTSPOTS = [
+  { id: "my-art",       label: "My Art",      href: "https://www.instagram.com/drezzdon/?hl=en",     external: true  },
+  { id: "live-exhibit", label: "Live Exhibit", href: "#",                                              external: false },
+  { id: "music",        label: "Music",        href: "https://linktr.ee/drezzdon",                    external: true  },
+  { id: "short-films",  label: "Short Films",  href: "https://www.youtube.com/@drezzdon/videos",      external: true  },
+  { id: "backgrounds",  label: "Backgrounds",  href: "#",                                              external: false },
 ];
 
-const DEBUG = true;
+const POSITIONS: Record<string, { top: number; left: number; width: number; height: number }> = {
+  "my-art":       { top: 16.1, left: 18.5, width: 11.6, height: 34.0 },
+  "live-exhibit": { top: 20.0, left: 43.2, width: 13.4, height: 38.0 },
+  "music":        { top: 17.4, left: 61.9, width: 27.3, height: 24.9 },
+  "short-films":  { top: 61.4, left: 17.0, width: 26.9, height: 24.5 },
+  "backgrounds":  { top: 52.6, left: 65.0, width: 11.8, height: 33.6 },
+};
 
 function calcDims() {
   if (typeof window === "undefined") return null;
@@ -30,15 +37,8 @@ function calcDims() {
   return { renderedW, renderedH, cropX, cropY };
 }
 
-type Action =
-  | { type: "move"; id: string; mouseX: number; mouseY: number; origLeft: number; origTop: number }
-  | { type: "resize"; id: string; mouseX: number; mouseY: number; origW: number; origH: number };
-
 export default function MyWorkPage() {
   const [dims, setDims] = useState<ReturnType<typeof calcDims>>(null);
-  const [hotspots, setHotspots] = useState(INITIAL_HOTSPOTS);
-  const [copied, setCopied] = useState(false);
-  const action = useRef<Action | null>(null);
 
   useEffect(() => {
     function update() { setDims(calcDims()); }
@@ -46,50 +46,6 @@ export default function MyWorkPage() {
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
-
-  useEffect(() => {
-    if (!dims) return;
-    function onMove(e: MouseEvent) {
-      if (!action.current || !dims) return;
-      const dx = e.clientX - action.current.mouseX;
-      const dy = e.clientY - action.current.mouseY;
-      const a = action.current;
-      if (a.type === "move") {
-        const newLeft = a.origLeft + (dx / dims.renderedW) * 100;
-        const newTop  = a.origTop  + (dy / dims.renderedH) * 100;
-        setHotspots(hs => hs.map(h => h.id === a.id ? { ...h, left: newLeft, top: newTop } : h));
-      } else {
-        const newW = Math.max(2, a.origW + (dx / dims.renderedW) * 100);
-        const newH = Math.max(2, a.origH + (dy / dims.renderedH) * 100);
-        setHotspots(hs => hs.map(h => h.id === a.id ? { ...h, width: newW, height: newH } : h));
-      }
-    }
-    function onUp() { action.current = null; }
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
-  }, [dims]);
-
-  function startMove(e: React.MouseEvent, id: string) {
-    e.preventDefault(); e.stopPropagation();
-    const spot = hotspots.find(h => h.id === id)!;
-    action.current = { type: "move", id, mouseX: e.clientX, mouseY: e.clientY, origLeft: spot.left, origTop: spot.top };
-  }
-
-  function startResize(e: React.MouseEvent, id: string) {
-    e.preventDefault(); e.stopPropagation();
-    const spot = hotspots.find(h => h.id === id)!;
-    action.current = { type: "resize", id, mouseX: e.clientX, mouseY: e.clientY, origW: spot.width, origH: spot.height };
-  }
-
-  function copyCoords() {
-    const text = hotspots.map(h =>
-      `${h.id}: top=${h.top.toFixed(1)}% left=${h.left.toFixed(1)}% width=${h.width.toFixed(1)}% height=${h.height.toFixed(1)}%`
-    ).join("\n");
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-black">
@@ -99,41 +55,33 @@ export default function MyWorkPage() {
         autoPlay muted loop playsInline
       />
 
-      {dims && hotspots.map((spot) => {
-        const left   = (spot.left   / 100) * dims.renderedW - dims.cropX;
-        const top    = (spot.top    / 100) * dims.renderedH - dims.cropY;
-        const width  = (spot.width  / 100) * dims.renderedW;
-        const height = (spot.height / 100) * dims.renderedH;
+      {dims && HOTSPOTS.map((spot) => {
+        const pos = POSITIONS[spot.id];
+        const left   = (pos.left   / 100) * dims.renderedW - dims.cropX;
+        const top    = (pos.top    / 100) * dims.renderedH - dims.cropY;
+        const width  = (pos.width  / 100) * dims.renderedW;
+        const height = (pos.height / 100) * dims.renderedH;
 
-        return (
-          <div
+        const style: React.CSSProperties = { position: "absolute", left, top, width, height };
+
+        return spot.external ? (
+          <a
             key={spot.id}
-            className="absolute flex items-center justify-center"
-            style={{ left, top, width, height, border: "2px solid blue", background: "rgba(0,0,255,0.15)", cursor: "grab", userSelect: "none" }}
-            onMouseDown={(e) => startMove(e, spot.id)}
-          >
-            <span className="text-white text-xs tracking-widest uppercase font-bold pointer-events-none select-none">
-              {spot.label}
-            </span>
-            {/* Resize handle — bottom-right corner */}
-            <div
-              className="absolute bottom-0 right-0 w-4 h-4 bg-blue-400"
-              style={{ cursor: "nwse-resize" }}
-              onMouseDown={(e) => startResize(e, spot.id)}
-            />
-          </div>
+            href={spot.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={spot.label}
+            style={style}
+          />
+        ) : (
+          <Link
+            key={spot.id}
+            href={spot.href}
+            aria-label={spot.label}
+            style={style}
+          />
         );
       })}
-
-      {DEBUG && (
-        <button
-          onClick={copyCoords}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-sm font-bold tracking-widest uppercase"
-          style={{ background: copied ? "#22c55e" : "#2563eb", color: "white", border: "none" }}
-        >
-          {copied ? "✓ Copied!" : "Copy Coordinates"}
-        </button>
-      )}
     </div>
   );
 }
