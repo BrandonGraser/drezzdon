@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 
-const VIDEO_ASPECT = 1456 / 816; // 16:9 approx — update if you know exact resolution
+const VIDEO_ASPECT = 1920 / 1080; // 16:9 approx — update if you know exact resolution
 
 const INITIAL_HOTSPOTS = [
   { id: "my-art",      label: "My Art",      href: "#", top: 8.0,  left: 12.0, width: 14.0, height: 28.0 },
