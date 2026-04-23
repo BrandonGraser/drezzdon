@@ -92,7 +92,7 @@ export default function MyWorkPage() {
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-black" style={{ cursor: "default" }}>
 
       <video
-        className="absolute inset-0 w-full h-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-contain object-center"
         src="https://www.dropbox.com/scl/fo/6tk8vtqi2yumnwal10a3g/APDAuw3sTUKaN6Ka2D9cATA/MY%20WORK%2016-9.mp4?rlkey=lj9i39hr7vn4bjb7j4vlkmpzx&st=27dl30cp&dl=1"
         autoPlay
         muted
