@@ -127,8 +127,8 @@ export default function HomePage() {
             {/* Email */}
             <a
               href="mailto:biz@drezzdon.com"
-              className="font-black leading-none transition-transform duration-200 hover:scale-105" style={{ color: "#ff0000" }}
-              style={{ fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "Arial Black, Arial, sans-serif" }}
+              className="font-black leading-none transition-transform duration-200 hover:scale-105"
+              style={{ color: "#ff0000", fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "Arial Black, Arial, sans-serif" }}
             >
               biz@drezzdon.com
             </a>
