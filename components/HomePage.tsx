@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 const DESKTOP_ASPECT = 1320 / 880;
 const MOBILE_ASPECT = 1080 / 1920;
 
-const CURSOR = "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAACp0lEQVR4nL3XwYojRRgA4K+TKIIHD4KKrIielBVRFBFlxYue9qCoB0EEQRQ8+AqDj7GKiCKLiouKeJA5rG/gHr0ILsZMsplsZmImmaTTKQ+p3m2anhEm6RQ0ge50/V/99Vd1N4UWaAZaOzRsq/3JPUPe6HJ/CdO4SiuQ1AoINI/5fcHBjO/HvHudB8uYsMLUk5kjPgyE/EhXmJ/GvPc352rHtHkoZRpIM9ISZjTjlxEfdHi4CrNWzeQjmbEbCBmLjGX8XZQw4xm/jvioy6NrjvsWoBVIxrwfA6VLQn6cgpnO2D3i4wHnA8mZCjZPX48HUsYxC8si4v8wA96Og2meNQtNmPJzWAVJqwAFSBbIUuZDXo99rFUHrUByyDt5HZwSfBkICxZDXsvvP3Pw2EECbe5NOThpGmLwLGX/gFc2EbwByWoum+cYLNhd9SurtkoCkz5/wG/rRC/13AokQ94sT0MsvmVGFuc/zOn8w2P5vZsAJKyeDSn9cDtwVqz4jGwRz6W0Ozy+SUQTjvkqBjvOt+Z9Xp3wQzyf5ktxTuc65zeCyAE3uZhX+5z9fZ6Dq9wVl2oZsbfHE2sjAkmCa9w9Z5Qy7PFUvHZngkvcMalGdLs8uQlEAw4lnwx4odhhfPgkO7Sm/FhGpPTat8FrTcetPb28wxURJ9REv83TayNioMrtNUe8RXPClYpM9Ds8szbitLYTEWhM+a4iE4MOz24LkRzxbUUmBntxBdWNaETENxWZGHZ5vlZEfBlpwBGXKzJx0CutqLoRX1cgDnu8uE3Elzmi8OwY3eDCNhFfVCD+vcFL8b/1fGeUEJ+XEQtGfV5W51dXRDQj4rNCTcwDYcbNa9xXG6AC8WnhlX5yyMXapuAkxIRLc/qF1bCdr/CISHZo/MUj8VwT/gP7QEEft6AQpwAAAABJRU5ErkJggg==') 0 0, auto";
-const CURSOR_HOVER = "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAiCAYAAAA6RwvCAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAEpklEQVR4nL2Y7W8UVRSHn3Nnbndnti1QA0rkg34zGt8I8lYl2QQoBkiMxMYYQ9Av/hmoif4NJoQEEo3SD6agFuStvJY1KUETjAZRPqgJKdTadt+6s3OPH2aWbrG00LeTbHYzc+eeZ36/s2fuHZgS/T6oByosfQyGXq6Qh0ttU4+rt5RQBv6YMMonNtfxqx8MHvCCq7vpuNEOEqcfhZ5FhxIAGxbeR1YehDIAqhN/o3LaYHprLd55Rl8Ymbykx4O3AFwCuYAghIOrLe43kAzEAtZDgiSXq95WkTNGpbfmZ/sZf3Z4MaAkmaw7tkGhD9O2Ay3GiQ0SJ+f9JqjKHRU5KyK9Ed5ZSi8NzSf5fSD9PuRjG/6wF2k7hI7FIN7kENWEAiahAFcZVuGciNcbUT5JqXMomY85KSNJAYrSemGljTM3Ea8d6goyTWFOBxWDMqGUP62XN34MakDco4KYe/+K4pY7KnoaCTS1ZTpuSdQSD+qKjlfBANFPvvMPwX7DHBXxk6+VAog4OYLHm6lKs13rkGVZtHQhKo/vjMgX76k7h0izpRMsu7bc1mq/I34HRA+wB8A5pN2glXNReXgXdJXmakkjTMqT2DP68r+KnpjZHnUQGrQ8EJXX5WGgMl+IJhBo2GPQI+CEab1RTY7XHdinvMylPHzk4Jz5/9hHi6ZkDX/7W20Q3ERaHodasz0OxIBLayAroFUn5V1xqfNM2gbqcwVpuhPRpJHli4p8N9UeddBiQCcgk/aKqgOXNZr7xstd3JZA9PsLADIZKnoE6pJ4rxHSYVQnDovRtUp0E2k1iU2Rgzgw2nbMCy93JTCDdi4g99VBw55bWT+8fUOwTyKtRt3Y4XrllfdANAgKayKxp0Qyz6DFenIzvgFvwlF5Iy5vPpHArIvmoYhoIu/TVcEcFVlj0LHP6pX1++BDAfUrlY1/WR3Zqlr7BWn1AZcUb5wxBEe98PLOBGJuyjRFjwfghYPb/eDqgVQpM7kWSc4Tnl/th1ev29x1tWEhsmEhtuGgs+GPNS+4uDsZ+/AwM7TPhk0NgOaOmTyxCY+v9ll1SiT7HDresEnAj0Ure2qVTcce1qZZ+vhMLbsB0/+Er+0nxWSfn4TxBGwsWnqrVunsfRiYeS79Upjc5VW+y54Uk30xgVEveYxZJ1rprlU2fT0bzDw7YncMPR6lzqG6N7ZVXfUa0uYn/acOREYl6GkJruyZrYDn3ZrvwRTzd+ve2HZ1lWlhbHageyaYBQC5D8Yf2YZODCLtKUwM1MGEX9nslbcfBLNAIE0w49uGI3+oCy2nMMRJl44UE35pswPvTAezCPuUtICXXVxho/A4EmxAx+qAB55Ci0FK70alzV80F/ACKtKIVJnR10aizD9daPnKpDKxQM2huc9tOLC3WZlF3E6mi6WOQrut+n1IrhMdbVImY6C4LypvPgz7zSLvaxsrt0ttNgz6kPDVqTDWQPWDqLzh4BJssBswvW02XPMtktuSwKgiy63q2K26La9dotcPDZjvczZ8rA8Jt4BDdeJn38WvV6vr/1zC9yDNMCtOgBdEZmwHxfzddD+0lKFpwv5WOgrtye9kWfEfrAIq1Q35o74AAAAASUVORK5CYII=') 0 0, pointer";
+const CURSOR_RED  = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAACp0lEQVR4nL3XwYojRRgA4K+TKIIHD4KKrIielBVRFBFlxYue9qCoB0EEQRQ8+AqDj7GKiCKLiouKeJA5rG/gHr0ILsZMsplsZmImmaTTKQ+p3m2anhEm6RQ0ge50/V/99Vd1N4UWaAZaOzRsq/3JPUPe6HJ/CdO4SiuQ1AoINI/5fcHBjO/HvHudB8uYsMLUk5kjPgyE/EhXmJ/GvPc352rHtHkoZRpIM9ISZjTjlxEfdHi4CrNWzeQjmbEbCBmLjGX8XZQw4xm/jvioy6NrjvsWoBVIxrwfA6VLQn6cgpnO2D3i4wHnA8mZCjZPX48HUsYxC8si4v8wA96Og2meNQtNmPJzWAVJqwAFSBbIUuZDXo99rFUHrUByyDt5HZwSfBkICxZDXsvvP3Pw2EECbe5NOThpGmLwLGX/gFc2EbwByWoum+cYLNhd9SurtkoCkz5/wG/rRC/13AokQ94sT0MsvmVGFuc/zOn8w2P5vZsAJKyeDSn9cDtwVqz4jGwRz6W0Ozy+SUQTjvkqBjvOt+Z9Xp3wQzyf5ktxTuc65zeCyAE3uZhX+5z9fZ6Dq9wVl2oZsbfHE2sjAkmCa9w9Z5Qy7PFUvHZngkvcMalGdLs8uQlEAw4lnwx4odhhfPgkO7Sm/FhGpPTat8FrTcetPb28wxURJ9REv83TayNioMrtNUe8RXPClYpM9Ds8szbitLYTEWhM+a4iE4MOz24LkRzxbUUmBntxBdWNaETENxWZGHZ5vlZEfBlpwBGXKzJx0CutqLoRX1cgDnu8uE3Elzmi8OwY3eDCNhFfVCD+vcFL8b/1fGeUEJ+XEQtGfV5W51dXRDQj4rNCTcwDYcbNa9xXG6AC8WnhlX5yyMXapuAkxIRLc/qF1bCdr/CISHZo/MUj8VwT/gP7QEEft6AQpwAAAABJRU5ErkJggg==";
+const CURSOR_BLUE = "data:image/png;base64,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";
 
 const DESKTOP_HOTSPOTS = [
   { id: "shop",    href: "https://drezzdon.myshopify.com/collections/all", external: true,    top: 46.5, left: 37.1, width: 9.1,  height: 15.3 },
@@ -50,6 +50,7 @@ export default function HomePage() {
   const [dims, setDims] = useState<ReturnType<typeof calcDims>>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function update() {
@@ -68,7 +69,8 @@ export default function HomePage() {
     : "https://www.dropbox.com/scl/fo/6tk8vtqi2yumnwal10a3g/ACc2whiGSh663Pw6UWuiDTc/HOMEPAGE%20-%2016-9.mp4?rlkey=lj9i39hr7vn4bjb7j4vlkmpzx&st=y3pb1twe&dl=1";
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black" style={{ cursor: hovering ? CURSOR_HOVER : CURSOR }}>
+    <div className="relative w-full h-screen overflow-hidden bg-black" style={{ cursor: "none" }}
+      onMouseMove={(e) => { cursorRef.current!.style.left = e.clientX + "px"; cursorRef.current!.style.top = e.clientY + "px"; }}>
 
       {/* VIDEO */}
       <video
@@ -84,7 +86,7 @@ export default function HomePage() {
         const top    = (spot.top    / 100) * dims.renderedH - dims.cropY;
         const width  = (spot.width  / 100) * dims.renderedW;
         const height = (spot.height / 100) * dims.renderedH;
-        const style: React.CSSProperties = { left, top, width, height, cursor: 'inherit' };
+        const style: React.CSSProperties = { left, top, width, height, cursor: 'none' };
 
         if (spot.id === "contact") {
           return (
@@ -122,7 +124,7 @@ export default function HomePage() {
             {/* Close button */}
             <button
               onClick={() => setContactOpen(false)}
-              className="absolute top-3 right-4 font-bold text-2xl leading-none transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000", cursor: "inherit" }}
+              className="absolute top-3 right-4 font-bold text-2xl leading-none transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000", cursor: "none" }}
               aria-label="Close"
               onMouseEnter={() => setHovering(true)}
               onMouseLeave={() => setHovering(false)}
@@ -134,7 +136,7 @@ export default function HomePage() {
             <a
               href="mailto:biz@drezzdon.com"
               className="font-black leading-none transition-transform duration-200 hover:scale-105"
-              style={{ color: "#ff0000", fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "'acumin-pro', sans-serif", fontWeight: 700, transform: "scaleY(1.2)", display: "inline-block", cursor: "inherit" }}
+              style={{ color: "#ff0000", fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "'acumin-pro', sans-serif", fontWeight: 700, transform: "scaleY(1.2)", display: "inline-block", cursor: "none" }}
               onMouseEnter={() => setHovering(true)}
               onMouseLeave={() => setHovering(false)}
             >
@@ -163,6 +165,22 @@ export default function HomePage() {
           </div>
         </div>
       )}
+      {/* CUSTOM CURSOR */}
+      <div
+        ref={cursorRef}
+        className="fixed pointer-events-none z-[9999]"
+        style={{
+          top: 0,
+          left: 0,
+          width: hovering ? "42px" : "32px",
+          height: hovering ? "42px" : "32px",
+          transform: "translate(0, 0)",
+          transition: "width 0.2s ease, height 0.2s ease",
+          backgroundImage: `url('${hovering ? CURSOR_BLUE : CURSOR_RED}')`,
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
     </div>
   );
 }
