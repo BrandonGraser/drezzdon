@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NavButtons from "@/components/NavButtons";
 import { useEffect, useState } from "react";
 
 const DESKTOP_ASPECT = 1920 / 1080;
@@ -68,6 +69,7 @@ export default function MyWorkPage() {
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-black">
+      <NavButtons />
       <video
         key={videoSrc}
         className="absolute inset-0 w-full h-full object-contain object-center"
