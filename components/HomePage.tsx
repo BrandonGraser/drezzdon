@@ -107,18 +107,18 @@ export default function HomePage() {
       {contactOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ background: "rgba(0,0,0,0.55)" }}
+          style={{ background: "rgba(0,0,0,0.75)", animation: "fadeIn 0.2s ease forwards" }}
           onClick={() => setContactOpen(false)}
         >
           <div
             className="relative flex flex-col items-center gap-6 p-8 md:p-12"
-            style={{ border: "3px solid #ff0000", background: "rgba(0,0,0,0.0)", maxWidth: "90vw" }}
+            style={{ border: "3px solid #ff0000", background: "rgba(0,0,0,0.0)", maxWidth: "90vw", animation: "popupIn 0.25s ease forwards" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
             <button
               onClick={() => setContactOpen(false)}
-              className="absolute top-3 right-4 text-red-500 font-bold text-2xl leading-none hover:text-white transition-colors"
+              className="absolute top-3 right-4 font-bold text-2xl leading-none transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000" }}
               aria-label="Close"
             >
               ✕
@@ -127,7 +127,7 @@ export default function HomePage() {
             {/* Email */}
             <a
               href="mailto:biz@drezzdon.com"
-              className="text-red-500 font-black leading-none hover:text-white transition-colors"
+              className="font-black leading-none transition-transform duration-200 hover:scale-105" style={{ color: "#ff0000" }}
               style={{ fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "Arial Black, Arial, sans-serif" }}
             >
               biz@drezzdon.com
@@ -142,7 +142,7 @@ export default function HomePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="text-red-500 hover:text-white transition-colors"
+                  className="transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000" }}
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
                     <path d={s.icon} />
