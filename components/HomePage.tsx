@@ -84,7 +84,7 @@ export default function HomePage() {
         const top    = (spot.top    / 100) * dims.renderedH - dims.cropY;
         const width  = (spot.width  / 100) * dims.renderedW;
         const height = (spot.height / 100) * dims.renderedH;
-        const style: React.CSSProperties = { left, top, width, height, cursor: CURSOR };
+        const style: React.CSSProperties = { left, top, width, height, cursor: 'inherit' };
 
         if (spot.id === "contact") {
           return (
@@ -101,9 +101,9 @@ export default function HomePage() {
         }
 
         return spot.external ? (
-          <a key={spot.id} href={spot.href} target="_blank" rel="noopener noreferrer" aria-label={spot.id} className="absolute" style={style} />
+          <a key={spot.id} href={spot.href} target="_blank" rel="noopener noreferrer" aria-label={spot.id} className="absolute" style={style} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)} />
         ) : (
-          <Link key={spot.id} href={spot.href} aria-label={spot.id} className="absolute" style={style} />
+          <Link key={spot.id} href={spot.href} aria-label={spot.id} className="absolute" style={style} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)} />
         );
       })}
 
@@ -122,8 +122,10 @@ export default function HomePage() {
             {/* Close button */}
             <button
               onClick={() => setContactOpen(false)}
-              className="absolute top-3 right-4 font-bold text-2xl leading-none transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000" }}
+              className="absolute top-3 right-4 font-bold text-2xl leading-none transition-transform duration-200 hover:scale-110" style={{ color: "#ff0000", cursor: "inherit" }}
               aria-label="Close"
+              onMouseEnter={() => setHovering(true)}
+              onMouseLeave={() => setHovering(false)}
             >
               ✕
             </button>
@@ -132,7 +134,9 @@ export default function HomePage() {
             <a
               href="mailto:biz@drezzdon.com"
               className="font-black leading-none transition-transform duration-200 hover:scale-105"
-              style={{ color: "#ff0000", fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "'acumin-pro', sans-serif", fontWeight: 700, transform: "scaleY(1.2)", display: "inline-block" }}
+              style={{ color: "#ff0000", fontSize: "clamp(1.8rem, 6vw, 4rem)", fontFamily: "'acumin-pro', sans-serif", fontWeight: 700, transform: "scaleY(1.2)", display: "inline-block", cursor: "inherit" }}
+              onMouseEnter={() => setHovering(true)}
+              onMouseLeave={() => setHovering(false)}
             >
               biz@drezzdon.com
             </a>
