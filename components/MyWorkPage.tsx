@@ -140,8 +140,8 @@ export default function MyWorkPage() {
   const activeMeta = isMobile ? MOBILE_META : DESKTOP_META;
 
   const videoSrc = isMobile
-    ? "https://www.dropbox.com/scl/fi/qz0ip69ebeyitg50wpqr7/MY-WORK-1080x1920.mp4?rlkey=om2c7k62pvuaos3v65ctl91vo&raw=1"
-    : "https://www.dropbox.com/scl/fi/517d6vjq72kft5f5l2jv7/MY-WORK-2160x1080.mp4?rlkey=k4ewqna2cw59va577p5gtr0v9&raw=1";
+    ? `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/qz0ip69ebeyitg50wpqr7/MY-WORK-1080x1920.mp4?rlkey=om2c7k62pvuaos3v65ctl91vo&raw=1")}`
+    : `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/517d6vjq72kft5f5l2jv7/MY-WORK-2160x1080.mp4?rlkey=k4ewqna2cw59va577p5gtr0v9&raw=1")}`;
 
   return (
     <div

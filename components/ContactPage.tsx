@@ -41,8 +41,8 @@ export default function ContactPage() {
   const hoverOff = () => setHovering(false);
 
   const videoSrc = isMobile
-    ? "https://www.dropbox.com/scl/fi/c8jlun3yl0hury3r625yz/CONTACT-9-16.mp4?rlkey=fywtg5kau4iza2sm3uzoz19r6&raw=1"
-    : "https://www.dropbox.com/scl/fi/k3wgo20anboz3a3h4xf73/CONTACT-16-9.mp4?rlkey=bwmxjj8ylkbu1dp94o7t1l2bf&raw=1";
+    ? `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/c8jlun3yl0hury3r625yz/CONTACT-9-16.mp4?rlkey=fywtg5kau4iza2sm3uzoz19r6&raw=1")}`
+    : `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/k3wgo20anboz3a3h4xf73/CONTACT-16-9.mp4?rlkey=bwmxjj8ylkbu1dp94o7t1l2bf&raw=1")}`;
 
   return (
     <div
