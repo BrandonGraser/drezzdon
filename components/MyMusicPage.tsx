@@ -128,8 +128,8 @@ export default function MyMusicPage() {
 
   const activePos = isMobile ? mobilePos : desktopPos;
   const videoSrc  = isMobile
-    ? "/videos/mymusic.mp4"
-    : "https://www.dropbox.com/scl/fi/3j5tl6utepnewncz8xzfy/MY-MUSIC-16-9.mp4?rlkey=25zz5atxe0nfsjv06vt7qlmmb&raw=1";
+    ? "https://www.dropbox.com/scl/fi/z2qccpgw8nh1iudgz0v5q/MY-MUSIC-9-16.mp4?rlkey=hmop7lv9z00zh27m62pgjqat4&raw=1"
+    : "https://www.dropbox.com/scl/fi/cc9a6onki13h9ficxrlhn/MY-MUSIC-16-9.mp4?rlkey=zwyacgapeams6pash06ewepig&raw=1";
 
   return (
     <div
