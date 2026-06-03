@@ -156,7 +156,7 @@ export default function MyWorkPage() {
     >
       <video
         key={videoSrc}
-        className="absolute inset-0 w-full h-full object-contain object-center"
+        className="absolute inset-0 w-full h-full object-cover object-center"
         src={videoSrc}
         autoPlay muted loop playsInline
       />
