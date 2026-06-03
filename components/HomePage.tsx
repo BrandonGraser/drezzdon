@@ -156,7 +156,7 @@ export default function HomePage() {
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden bg-black"
+      className="fixed inset-0 overflow-hidden bg-black"
       style={{ cursor: isMobile ? "auto" : "none" }}
       onMouseMove={(e) => {
         if (cursorRef.current) {
@@ -221,7 +221,7 @@ export default function HomePage() {
         );
       })}
       {/* SOCIAL ICONS — bottom-right desktop, bottom-center mobile */}
-      <div className="fixed bottom-5 right-5 md:bottom-6 md:right-6 z-50 flex gap-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-6">
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 md:bottom-6 md:left-auto md:translate-x-0 md:right-6 z-50 flex gap-4">
         {SOCIALS.map((s) => (
           <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
             className="transition-transform duration-200 hover:scale-110"
