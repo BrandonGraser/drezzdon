@@ -172,8 +172,8 @@ export default function HomePage() {
         className="absolute inset-0 w-full h-full object-cover object-center"
         autoPlay muted loop playsInline
         src={isMobile
-          ? `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/w1gzajceiiz0votljrcdt/test.mp4?rlkey=okyfk4j2nva1pkpj0s8vz0k68&raw=1")}`
-          : `/api/video?src=${encodeURIComponent("https://www.dropbox.com/scl/fi/nregtfu5s1gnio984i7rs/HOMEPAGE-16-9.mp4?rlkey=rsmqdiyjrsz8ir2e2krurf81l&raw=1")}`
+          ? "https://www.dropbox.com/scl/fi/w1gzajceiiz0votljrcdt/test.mp4?rlkey=okyfk4j2nva1pkpj0s8vz0k68&raw=1"
+          : "https://www.dropbox.com/scl/fi/nregtfu5s1gnio984i7rs/HOMEPAGE-16-9.mp4?rlkey=rsmqdiyjrsz8ir2e2krurf81l&raw=1"
         }
       />
 
