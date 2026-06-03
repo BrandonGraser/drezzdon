@@ -140,7 +140,7 @@ export default function MyWorkPage() {
   const activeMeta = isMobile ? MOBILE_META : DESKTOP_META;
 
   const videoSrc = isMobile
-    ? "/videos/MY WORK 1080x1920.mp4"
+    ? "/videos/mywork.mp4"
     : "https://www.dropbox.com/scl/fi/517d6vjq72kft5f5l2jv7/MY-WORK-2160x1080.mp4?rlkey=k4ewqna2cw59va577p5gtr0v9&raw=1";
 
   return (

@@ -168,12 +168,14 @@ export default function HomePage() {
       {/* VIDEO */}
       <video
         ref={videoRef}
+        key={isMobile ? "mobile" : "desktop"}
         className="absolute inset-0 w-full h-full object-cover object-center"
         autoPlay muted loop playsInline
-      >
-        <source src="/videos/homepage.mp4" type="video/mp4" media="(max-width: 767px)" />
-        <source src="https://www.dropbox.com/scl/fi/6mmmcrf8bebk71bdhiofv/HOMEPAGE-16-9.mp4?rlkey=tv0uce4i9h31tnxywq9n6qe6h&raw=1" type="video/mp4" />
-      </video>
+        src={isMobile
+          ? "/videos/homepage.mp4"
+          : "https://www.dropbox.com/scl/fi/6mmmcrf8bebk71bdhiofv/HOMEPAGE-16-9.mp4?rlkey=tv0uce4i9h31tnxywq9n6qe6h&raw=1"
+        }
+      />
 
       {/* HOTSPOTS */}
       {dims && DEBUG && activePos.map((pos) => (

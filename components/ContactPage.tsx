@@ -41,7 +41,7 @@ export default function ContactPage() {
   const hoverOff = () => setHovering(false);
 
   const videoSrc = isMobile
-    ? "/videos/CONTACT 9-16.mp4"
+    ? "/videos/contact.mp4"
     : "https://www.dropbox.com/scl/fi/5eafb96ijv3zb5iwciwg2/CONTACT-16-9.mp4?rlkey=ffrxbftv1awjcuz3pcm2uznj0&raw=1";
 
   return (

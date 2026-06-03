@@ -128,7 +128,7 @@ export default function MyMusicPage() {
 
   const activePos = isMobile ? mobilePos : desktopPos;
   const videoSrc  = isMobile
-    ? "/videos/MY MUSIC 9-16.mp4"
+    ? "/videos/mymusic.mp4"
     : "https://www.dropbox.com/scl/fi/3j5tl6utepnewncz8xzfy/MY-MUSIC-16-9.mp4?rlkey=25zz5atxe0nfsjv06vt7qlmmb&raw=1";
 
   return (
