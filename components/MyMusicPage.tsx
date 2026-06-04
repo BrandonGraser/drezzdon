@@ -133,8 +133,8 @@ export default function MyMusicPage() {
 
   return (
     <div
-      className="fixed inset-0 w-full h-full overflow-hidden bg-black"
-      style={{ cursor: isMobile ? "auto" : "none" }}
+      className="fixed inset-0 w-full h-full bg-black"
+      style={{ cursor: isMobile ? "auto" : "none", overflowY: isMobile ? "auto" : "hidden" }}
       onMouseMove={(e) => {
         if (cursorRef.current) {
           cursorRef.current.style.left = e.clientX + "px";
@@ -145,6 +145,7 @@ export default function MyMusicPage() {
       <video
         key={videoSrc}
         className="absolute inset-0 w-full h-full object-cover object-center"
+        style={isMobile ? { top: "50px" } : undefined}
         src={videoSrc}
         autoPlay muted loop playsInline
       />
@@ -181,7 +182,7 @@ export default function MyMusicPage() {
       {dims && !DEBUG && activePos.map((pos) => {
         const meta = META.find(m => m.id === pos.id)!;
         const left   = (pos.left   / 100) * dims.renderedW - dims.cropX;
-        const top    = (pos.top    / 100) * dims.renderedH - dims.cropY;
+        const top    = (pos.top    / 100) * dims.renderedH - dims.cropY + (isMobile ? 50 : 0);
         const width  = (pos.width  / 100) * dims.renderedW;
         const height = (pos.height / 100) * dims.renderedH;
         return (

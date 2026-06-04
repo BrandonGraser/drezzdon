@@ -69,8 +69,8 @@ export default function ContactPage() {
       {/* FORM */}
       <div className="absolute inset-0 flex items-center justify-center px-4">
         <div
-          className="relative w-full max-w-lg flex flex-col gap-5 p-8 md:p-12"
-          style={{ border: "3px solid #ff0000", animation: "popupIn 0.3s ease forwards" }}
+          className="relative w-full max-w-lg flex flex-col gap-5 p-8 md:p-12 contact-form-box"
+          style={{ border: isMobile ? "none" : "3px solid #ff0000", animation: "popupIn 0.3s ease forwards" }}
         >
           {/* Title */}
           <h2
